@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "docs",
+            "outputPath": "dist/webcam",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -96,6 +96,6 @@
     }
   },
   "cli": {
-    "analytics": "972585cd-8e95-4efe-926d-6fc0ecdcb9ba"
+    "analytics": "6362a781-2a6d-4a17-8dc0-559b8f33c3d0"
   }
 }
