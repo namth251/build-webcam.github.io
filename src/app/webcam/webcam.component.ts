@@ -10,65 +10,67 @@ import { Observable, Subject } from 'rxjs';
 export class WebcamComponent {
 
   // toggle webcam on/off
-   showWebcam = true;
-   allowCameraSwitch = true;
-   multipleWebcamsAvailable = false;
-   deviceId: any;
-   videoOptions: MediaTrackConstraints = {
+  showWebcam = true;
+  allowCameraSwitch = true;
+  multipleWebcamsAvailable = false;
+  deviceId: any;
+  videoOptions: MediaTrackConstraints = {
     // width: {ideal: 1024},
     // height: {ideal: 576}
   };
-   errors: WebcamInitError[] = [];
+  errors: WebcamInitError[] = [];
 
   // latest snapshot
   webcamImage: WebcamImage | undefined;
 
   // webcam snapshot trigger
-   trigger: Subject<void> = new Subject<void>();
+  trigger: Subject<void> = new Subject<void>();
   // switch to next / previous / specific webcam; true/false: forward/backwards, string: deviceId
-   nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
+  nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
 
-  public ngOnInit(): void {
+  ngOnInit(): void {
     WebcamUtil.getAvailableVideoInputs()
       .then((mediaDevices: MediaDeviceInfo[]) => {
         this.multipleWebcamsAvailable = mediaDevices && mediaDevices.length > 1;
       });
   }
 
-  public triggerSnapshot(): void {
-    this.trigger.next();
+  triggerSnapshot(): void {
+    setInterval(() => {
+      this.trigger.next();
+    }, 2000)
   }
 
-  public toggleWebcam(): void {
+  toggleWebcam(): void {
     this.showWebcam = !this.showWebcam;
   }
 
-  public handleInitError(error: WebcamInitError): void {
+  handleInitError(error: WebcamInitError): void {
     this.errors.push(error);
   }
 
-  public showNextWebcam(directionOrDeviceId: boolean | string): void {
+  showNextWebcam(directionOrDeviceId: boolean | string): void {
     // true => move forward through devices
     // false => move backwards through devices
     // string => move to device with given deviceId
     this.nextWebcam.next(directionOrDeviceId);
   }
 
-  public handleImage(webcamImage: WebcamImage): void {
+  handleImage(webcamImage: WebcamImage): void {
     console.info('received webcam image', webcamImage);
     this.webcamImage = webcamImage;
   }
 
-  public cameraWasSwitched(deviceId: string): void {
+  cameraWasSwitched(deviceId: string): void {
     console.log('active device: ' + deviceId);
     this.deviceId = deviceId;
   }
 
-  public get triggerObservable(): Observable<void> {
+  get triggerObservable(): Observable<void> {
     return this.trigger.asObservable();
   }
 
-  public get nextWebcamObservable(): Observable<boolean | string> {
+  get nextWebcamObservable(): Observable<boolean | string> {
     return this.nextWebcam.asObservable();
   }
 }
